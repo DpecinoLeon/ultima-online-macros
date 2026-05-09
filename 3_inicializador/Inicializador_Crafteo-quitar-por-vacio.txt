@@ -1,0 +1,4 @@
+
+inicio:
+    Event SysMessage [INICIADOR] Comienza el iniciador, que no hace nada
+exit

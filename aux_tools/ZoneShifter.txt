@@ -1,0 +1,346 @@
+;============================================================
+;ZONESHIFTER
+;============================================================
+;
+; Gestiona el sistema de zonas de farmeo (farmzones y subzonas).
+;
+; RESPONSABILIDAD:
+;  - Determinar la zona activa de trabajo
+;  - Avanzar entre subzonas dentro de una farmzone
+;  - Cambiar de farmzone cuando se agota la actual
+;  - Calcular límites, centros y grid de trabajo
+;  - Dirigir el movimiento del personaje entre zonas
+;
+; IMPORTANTE:
+;  Este script NO:
+;   - Ejecuta skills
+;   - Decide targets
+;   - Realiza farmeo directamente
+;
+;  Solo gestiona la navegación espacial del sistema.
+;
+;============================================================
+
+; =========================
+; PARAMETROS DE LLAMADA
+; =========================
+
+set %MOVE_TIMEOUT 60s
+set %MODE *param1
+set %TARGET_ZONE *param2
+
+if %MODE = ""
+    set %MODE ADVANCE
+
+Event SysMessage [ZONESHIFTER] Mode %MODE Target %TARGET_ZONE
+
+
+; =========================
+; MODOS DE FUNCIONAMIENTO
+; =========================
+
+if %MODE = ADVANCE
+{
+    Event SysMessage [ZONESHIFTER] Avanzando zona
+    gosub AvanzarZona
+    exit
+}
+
+if %MODE = GOTO_ZERO
+{
+    set %TARGET_ZONE 0
+    gosub IrAFarmZoneObjetivo %TARGET_ZONE
+    exit
+}
+
+if %MODE = GOTO_ZONE
+{
+    gosub IrAFarmZoneObjetivo %TARGET_ZONE
+    exit
+}
+
+
+; ============================================================
+; AVANZAR ZONA
+; ============================================================
+
+sub AvanzarZona
+
+    set *zoneLastIndexX 0
+    set *zoneLastIndexY 0
+
+    gosub SeleccionarSiguienteZona
+    gosub MoverACentroZona
+
+    Event SysMessage [ZONESHIFTER] Fin movimiento
+
+return
+
+
+; ============================================================
+; SELECCION DE SIGUIENTE ZONA
+; ============================================================
+
+sub SeleccionarSiguienteZona
+
+    if *resetFarmZone = 1
+    {
+        set *resetFarmZone 0
+        gosub resetFarmZone
+        return
+    }
+
+    gosub GridShiftXY *zoneStartX *zoneStartY *zoneCountX *zoneCountY 0
+
+    if %shiftX = -1
+    {
+        Event SysMessage [ZONESHIFTER] FarmZone agotada
+
+        gosub pauseDebug
+        gosub SeleccionarFarmZone
+
+        gosub calcularFarmZone *farmZone
+        gosub SetFarmZoneVariables
+
+        set *zoneStartX 0
+        set *zoneStartY 0
+    }
+    else
+    {
+        set *zoneStartX %shiftX
+        set *zoneStartY %shiftY
+
+        if *subfarmzoneHistory = ""
+            set *subfarmzoneHistory *zoneStartX , - , *zoneStartY
+        else
+            set *subfarmzoneHistory *subfarmzoneHistory , _ , *zoneStartX , - , *zoneStartY
+    }
+
+return
+
+
+; ============================================================
+; RESET FARMZONE
+; ============================================================
+
+sub resetFarmZone
+
+    set *lastFarmZone *CFG_INITIAL_FARMZONE
+    set *farmZone *CFG_INITIAL_FARMZONE
+
+    set *farmzoneHistory ""
+    set *subfarmzoneHistory ""
+
+    set *zoneStartX 0
+    set *zoneStartY 0
+
+    gosub calcularFarmZone *farmZone
+    gosub SetFarmZoneVariables
+
+    set *resetFarmZone 0
+
+return
+
+
+; ============================================================
+; MOVER AL CENTRO DE ZONA
+; ============================================================
+
+sub MoverACentroZona
+
+    if *lastFarmZone <> *farmZone
+    {
+        Event SysMessage [ZONESHIFTER] Cambio farmzone *lastFarmZone -> *farmZone
+
+        gosub IrAFarmZoneObjetivo *farmZone
+        set *lastFarmZone *farmZone
+    }
+
+    gosub CalcularZona *zoneStartX *zoneStartY
+
+    if *DEBUGMODE = 1
+        Event SysMessage [ZONESHIFTER] Moviendo centro zona
+
+    move %tempzoneCenterCoordX %tempzoneCenterCoordY 1 %MOVE_TIMEOUT
+
+return
+
+
+; ============================================================
+; IR A FARMZONE OBJETIVO
+; ============================================================
+
+sub IrAFarmZoneObjetivo
+
+    set %targetFarmZone %1
+
+    gosub DetectarFarmZoneActual
+
+    if %currentFarmZone = %targetFarmZone
+    {
+        gosub calcularFarmZone %currentFarmZone
+        move %tempfarmZoneCenterX %tempfarmZoneCenterY 1 %MOVE_TIMEOUT
+        return
+    }
+
+    gosub CalcularDireccionFarmZone
+
+    set %fz %currentFarmZone
+
+    repeat
+        set %fz %fz + %step
+
+        if %useWrap = 1
+        {
+            if %fz > *CFG_FARM_ZONE_COUNT
+                set %fz 0
+        }
+
+        gosub calcularFarmZone %fz
+
+        move %tempfarmZoneCenterX %tempfarmZoneCenterY 1 %MOVE_TIMEOUT
+
+    until %fz = %targetFarmZone
+
+return
+
+
+; ============================================================
+; CALCULO DIRECCION FARMZONE
+; ============================================================
+
+sub CalcularDireccionFarmZone
+
+    set %useWrap 0
+
+    if *CFG_FARMZONE_CIRCULAR <> 1
+    {
+        if %currentFarmZone < %targetFarmZone
+            set %step 1
+        else
+            set %step -1
+        return
+    }
+
+    if %targetFarmZone <> 0
+    {
+        if %currentFarmZone < %targetFarmZone
+            set %step 1
+        else
+            set %step -1
+        return
+    }
+
+    if %currentFarmZone >= *CFG_FARMZONE_WRAP_FROM
+    {
+        set %step 1
+        set %useWrap 1
+    }
+    else
+    {
+        set %step -1
+    }
+
+return
+
+
+; ============================================================
+; DETECCION FARMZONE ACTUAL
+; ============================================================
+
+sub DetectarFarmZoneActual
+
+    set %currentFarmZone -1
+
+    for %i 0 *CFG_FARM_ZONE_COUNT
+    {
+        gosub calcularFarmZone %i
+
+        if #CHARPOSX >= %tempfarmZoneTopLeftX && #CHARPOSX <= %tempfarmZoneBotRightX &&
+           #CHARPOSY >= %tempfarmZoneTopLeftY && #CHARPOSY <= %tempfarmZoneBotRightY
+        {
+            if *DEBUGMODE = 1
+                Event SysMessage [ZONESHIFTER] Farmzone detectada %i
+
+            set %currentFarmZone %i
+            return
+        }
+    }
+
+return
+
+
+; ============================================================
+; SELECCION FARMZONE
+; ============================================================
+
+sub SeleccionarFarmZone
+
+    set *lastFarmZone *farmZone
+    set *farmZone *farmZone + 1
+
+    if *farmZone > *CFG_FARM_ZONE_COUNT
+        set *farmZone 0
+
+return
+
+
+; ============================================================
+; GRID SHIFT
+; ============================================================
+
+sub GridShiftXY
+
+    set %shiftX %1
+    set %shiftY %2
+
+    set %rowParity %2 % 2
+
+    if %rowParity = 0
+    {
+        set %shiftX %shiftX + 1
+
+        if %shiftX >= %3
+        {
+            set %shiftY %shiftY + 1
+            set %shiftX %3 - 1
+        }
+    }
+    else
+    {
+        set %shiftX %shiftX - 1
+
+        if %shiftX < 0
+        {
+            set %shiftY %shiftY + 1
+            set %shiftX 0
+        }
+    }
+
+    if %shiftY >= %4
+    {
+        if %5 = 1
+        {
+            set %shiftX 0
+            set %shiftY 0
+        }
+        else
+        {
+            set %shiftX -1
+            set %shiftY -1
+        }
+    }
+
+return
+
+
+; ============================================================
+; DEBUG
+; ============================================================
+
+sub pauseDebug
+
+    if %DEBUGMODE = 1
+        pause
+
+return

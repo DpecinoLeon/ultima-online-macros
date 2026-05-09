@@ -1,0 +1,27 @@
+;============================================================
+;EJECUTOR VENDAS
+;============================================================
+;
+; Ejecuta la espera controlada entre usos de vendas.
+;
+; RESPONSABILIDAD:
+;  - Mantener el timing entre ciclos de curación
+;  - Sincronizar el ritmo del sistema de vendas
+;
+; IMPORTANTE:
+;  Este ejecutor NO utiliza skills directamente.
+;  La lógica real de uso de vendas se realiza mediante:
+;   - macros externas
+;   - AssistUO
+;   - scripts auxiliares
+;
+;  Este script únicamente controla el tiempo de espera
+;  entre ejecuciones del ORQUESTADOR.
+;
+;============================================================
+
+Ejecutor:
+
+    wait *CFG_TIME_ACCION
+
+exit

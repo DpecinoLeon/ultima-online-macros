@@ -1,0 +1,151 @@
+; ################################################################
+; # PREPARADOR - ARQUERÍA
+; ################################################################
+;
+; Control de posicionamiento y limpieza antes/durante la ejecución:
+; - movimiento inicial
+; - gestión de vendas
+; - movimiento final
+;
+
+
+set %limitHits 15
+
+
+; ============================================================
+; FLUJO PRINCIPAL
+; ============================================================
+
+Preparador:
+
+    gosub MoverInicio
+    gosub LimpiarVendas
+    gosub MoverFinal
+
+exit
+
+
+; ============================================================
+; MOVIMIENTO INICIAL
+; ============================================================
+
+sub MoverInicio
+
+    if #HITS < %limitHits && #CHARPOSX < 1390
+    {
+        set %inicioX #CHARPOSX + 20
+        set %inicioY #CHARPOSY
+        move %inicioX %inicioY
+    }
+    else
+    {
+        if #CHARPOSX < 1390
+        {
+            set %inicioX #CHARPOSX - 1
+            set %inicioY #CHARPOSY + 8
+            move %inicioX %inicioY
+        }
+    }
+
+return
+
+
+; ============================================================
+; LIMPIEZA DE VENDAS
+; ============================================================
+
+sub LimpiarVendas
+
+    set %typeVendasSucias AMF
+
+    finditem %typeVendasSucias C_ , #BACKPACKID
+
+    if #FINDCNT > 0
+    {
+        gosub SoltarPilon
+        gosub UsarVendasSucias
+        gosub RecogerPilon
+    }
+
+    wait 5s
+
+return
+
+
+; ============================================================
+; SOLTAR PILÓN
+; ============================================================
+
+sub SoltarPilon
+
+    set %idPilonAgua PCGELPD
+
+    set %dropX #CHARPOSX + 1
+    set %dropY #CHARPOSY + 1
+
+    Exevent Drag %idPilonAgua
+    wait 10
+
+    Exevent Dropg #CHARPOSX #CHARPOSY #CHARPOSZ
+    wait 10
+
+return
+
+
+; ============================================================
+; USAR VENDAS SUCIAS
+; ============================================================
+
+sub UsarVendasSucias
+
+    set #LOBJECTID #FINDID
+    event macro 17 0
+
+    set #LTARGETID %idPilonAgua
+
+    target 10s
+    event macro 22 0
+
+    wait 1s
+
+return
+
+
+; ============================================================
+; RECOGER PILÓN
+; ============================================================
+
+sub RecogerPilon
+
+    Exevent Drag %idPilonAgua
+    wait 10
+
+    Exevent Dropc #BACKPACKID
+    wait 10
+
+return
+
+
+; ============================================================
+; MOVIMIENTO FINAL
+; ============================================================
+
+sub MoverFinal
+
+    if #HITS > %limitHits && #CHARPOSX > 1390
+    {
+        set %finalX #CHARPOSX - 20
+        set %finalY #CHARPOSY
+        move %finalX %finalY
+    }
+    else
+    {
+        if #CHARPOSX < 1390
+        {
+            set %finalX #CHARPOSX + 1
+            set %finalY #CHARPOSY - 8
+            move %finalX %finalY
+        }
+    }
+
+return
