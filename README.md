@@ -4,6 +4,8 @@ Parte de la inspiración y enfoque inicial de este proyecto provienen del trabaj
 
 Sus macros me adentraron en easyUO y gracias a ellas pude crear este proyecto.
 
+Una vez que se aprende a usar una macro, es muy sencillo generar nuevas macros o adaptar las existentes.
+
 # Modular UO Automation Framework
 
 Framework modular de automatización para Ultima Online basado en macros desacopladas, configurables y reutilizables.
