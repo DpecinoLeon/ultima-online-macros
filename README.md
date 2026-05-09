@@ -38,6 +38,14 @@ El objetivo es construir un framework modular capaz de:
 
 La mayoría de automatizaciones se construyen únicamente cambiando la configuración y reutilizando módulos existentes.
 
+# Como utilizarlo
+
+- Abrir el archivo de config de lo que se quiera macrear (Se pueden crear nuevos configs)
+- Modificarlo para adaptarlo a tu situacion, ids, casas, farmzones...
+- Cargar en easyUO el archivo launcher.txt
+- Cambiar la linea set *SCRIPT_DIR D:\Damian\Chorradillas\UltimaOnline\Scripts\ para adaptarlo a tu ruta
+- Cambiar la linea set %CONFIG_SCRIPT *SCRIPT_DIR , 0_config\ , Config_Doma_Yew.txt para elegir el fichero de configuracion que se quiera usar para macrear. 
+
 ---
 
 # Arquitectura general
