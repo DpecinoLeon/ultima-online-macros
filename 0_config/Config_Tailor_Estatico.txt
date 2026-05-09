@@ -1,6 +1,18 @@
 Event SysMessage [CONFIG] Inicializando configuracion de TAILOR
 
 ; =========================
+; INSTRUCCIONES
+; =========================
+
+
+; Siturarse frente a un cofre que tenga los recursos de crafteo
+; Los contenedores y bolsas deben estar visibles en la pantalla
+; Revisar los Ids de los contenedores para adaptarlos a tu situacion.
+; Para el crafteo, se suelen utilizar scripts de assistUO ejecutados en loop. Revisar el ejecutor o el preparador.
+; Tener abierto el gump de costura con la pagina donde se fabrica el item
+
+
+; =========================
 ; FICHEROS
 ; =========================
 set *CFG_SCRIPT_ORQUESTADOR Orquestador.txt
@@ -14,7 +26,7 @@ set *CFG_SCRIPT_EJECUTOR Ejecutor_Crafteo.txt
 ; =========================
 set *CFG_RESOURCE_TYPE0 RTI
 set *CFG_RESOURCE_QUANTITY0 40
-set *CFG_RESOURCE_CONTAINER0 EDUQGQD
+set *CFG_RESOURCE_CONTAINER0 EDUQGQD ;***********	Contenedor de Tela
 set *CFG_RESOURCE_BUY_KEY0 F1
 set *CFG_RESOURCE_BUY_USE_AFTER_BUY0 1
 set *CFG_RESOURCE_BUY_USE_TYPE0 ZZF
@@ -30,7 +42,7 @@ set *CFG_SKILL_REQUIRES_OBJECT 1
 set *CFG_SKILL_EQUIP_OBJECT 0
 set *CFG_SKILL_OBJECT_TYPE HAG      ; Kit de Costura
 set *CFG_SKILL_OBJECT_COUNT 3
-set *CFG_SKILL_OBJECT_CONTAINER ZANXPMD
+set *CFG_SKILL_OBJECT_CONTAINER ZANXPMD ;***********	Contenedor de kits de costura
 set *CFG_SKILL_OBJECT_USEOBJECT 1
 set *CFG_SKILL_OBJECT_USETARGET 1
 set *CFG_SKILL_OBJECT_TARGET RTI     ; Tela

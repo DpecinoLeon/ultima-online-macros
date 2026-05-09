@@ -1,4 +1,14 @@
-Event SysMessage [CONFIG] Inicializando configuracion de MINA
+Event SysMessage [CONFIG] Inicializando configuracion de MINA_FUNDIR
+
+; =========================
+; INSTRUCCIONES
+; =========================
+
+
+; Configurar previamente la casa con el CONFIG_GENERATOR_HOME
+; Se debe poder andar entre el cofre de casa y la forja
+; La primera farmzone debe estar cerca de la casa.
+
 
 ; =========================
 ; FICHEROS
@@ -15,7 +25,7 @@ set *CFG_IR_CASA 1
 set *CFG_TILE_Z 1
 set *CFG_TILE_USE_Z 0 - 90
 
-set %SCRIPT_CASA *SCRIPT_DIR , 0_config\home\ , CONFIG_HOME_Mina.txt
+set %SCRIPT_CASA *SCRIPT_DIR , 0_config\home\ , CONFIG_HOME_Mina.txt  ;***********	Casa a utilizar
 call %SCRIPT_CASA
 
 ; =========================
@@ -71,8 +81,8 @@ set *CFG_TIMEOUT_ACCION 120000
 ; =========================
 set *CFG_RESOURCE_TYPE0 DWJ_TVJ_GWJ
 set *CFG_RESOURCE_QUANTITY0 50
-set *CFG_RESOURCE_CONTAINER0 PQNJFQD ; Caja de minerales del banco
-set *CFG_RESOURCE_CONTAINER_TO0 YHLHFQD ; Caja de minerales mochila
+set *CFG_RESOURCE_CONTAINER0 PQNJFQD   ;***********	Casa a utilizarCaja de minerales del banco
+set *CFG_RESOURCE_CONTAINER_TO0 YHLHFQD   ;***********	Casa a utilizarCaja de minerales mochila
 set *CFG_RESOURCE_COUNT 0
 ; =========================
 
@@ -109,5 +119,5 @@ set *CFG_PESO_MAX #MAXWEIGHT - 80
 ; =========================
 set *CFG_LOG_LEVEL 3
 
-Event SysMessage [CONFIG] MINA lista
+Event SysMessage [CONFIG] MINA_FUNDIR lista
 exit

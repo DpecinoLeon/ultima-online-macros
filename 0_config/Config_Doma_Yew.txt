@@ -1,6 +1,17 @@
 Event SysMessage [CONFIG] Inicializando configuracion de DOMA
 
 ; =========================
+; INSTRUCCIONES
+; =========================
+
+
+; Configurar previamente la farmzone
+; *IMPORTANTE, debe poderse andar sin grandes obstaculos entre los centros de farmzones adyacentes para que no se quede bloqueado el personaje.
+; Situarse cerca de la primera farmzone
+; Disponer de libro de hechizos con telepor y regs suficientes por si se atasca el personaje.
+; Dependiendo de la habilidad de doma, hay que quitar animales de *CFG_ANIMAL_TYPES
+
+; =========================
 ; INICIO
 ; =========================
 set *CFG_INITIAL_FARMZONE 0
@@ -67,7 +78,6 @@ set *CFG_OK_COUNT 3
 ; =========================
 set *CFG_FAIL0 ESTAS_DEMASIADO_LEJOS
 set *CFG_FAIL1 NO_CONSIGUES_DOMAR
-set *CFG_FAIL2 NO_CONSIGUES_DOMAR
 set *CFG_FAIL_COUNT 1
 
 ; =========================
@@ -80,12 +90,8 @@ set *CFG_TIMEOUT_ACCION 30000
 ; =========================
 ; DESATASCAR
 ; =========================
-set *CFG_SAFE_TELEPORT_TILE_X 420
-set *CFG_SAFE_TELEPORT_TILE_Y 999
-
-set *CFG_TELEPORT_FAIL0 SEE_THE_TARGET
-set *CFG_TELEPORT_FAIL1 NO_PUEDES_TELETRANSPORTARTE
-set *CFG_TELEPORT_FAIL_COUNT 1
+set *CFG_SAFE_TELEPORT_TILE_X 420 ;********** Tile central a todas las regiones de agua para calcular la direccion del teleport para desatascarse
+set *CFG_SAFE_TELEPORT_TILE_Y 999 ;********** Tile central a todas las regiones de agua para calcular la direccion del teleport para desatascarse
 
 ; =========================
 ; LOG

@@ -1,6 +1,18 @@
 Event SysMessage [CONFIG] Inicializando configuracion de TALA
 
 ; =========================
+; INSTRUCCIONES
+; =========================
+
+
+; Configurar previamente la farmzone con el CONFIG_GENERATOR_FARMZONE
+; Configurar previamente la casa con el CONFIG_GENERATOR_HOME
+; Una farmzone es una extension cuadrada donde el personaje escaneara cada tile en busca de arboles. Talará todos los arboles en su interior.
+; *IMPORTANTE, debe poderse andar sin grandes obstaculos entre los centros de farmzones adyacentes para que no se quede bloqueado el personaje.
+; Situarse cerca de la primera farmzone
+; La primera farmzone debe estar cerca de la casa.
+
+; =========================
 ; INICIO
 ; =========================
 set *CFG_INITIAL_FARMZONE 0
@@ -19,10 +31,10 @@ set *CFG_SCRIPT_EJECUTOR Ejecutor_Skill_On_Tile.txt
 set *CFG_IR_CASA 1
 set *CFG_TILE_Z 3
 
-set %SCRIPT_FARMZONE *SCRIPT_DIR , 0_config\farmzone\ , CONFIG_FARMZONE_Lumberjaking_CasaDami.txt
+set %SCRIPT_FARMZONE *SCRIPT_DIR , 0_config\farmzone\ , CONFIG_FARMZONE_Lumberjaking_CasaDami.txt ;***********	Farmone a utilizar
 call %SCRIPT_FARMZONE
 
-set %SCRIPT_CASA *SCRIPT_DIR , 0_config\home\ , CONFIG_HOME_CasaDami.txt
+set %SCRIPT_CASA *SCRIPT_DIR , 0_config\home\ , CONFIG_HOME_CasaDami.txt ;***********	Casa a utilizar
 call %SCRIPT_CASA
 
 ; =========================

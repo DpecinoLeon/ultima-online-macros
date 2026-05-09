@@ -1,11 +1,11 @@
 ; ################################################################
-; # PREPARADOR - ARQUERÍA
+; # PREPARADOR - ARQUERÍA CASTILLO
 ; ################################################################
 ;
-; Control de posicionamiento y limpieza antes/durante la ejecución:
-; - movimiento inicial
-; - gestión de vendas
-; - movimiento final
+; Control de movimiento entre puntos del castillo:
+; - gestión de HP (curación)
+; - alternancia INICIAL / FINAL
+; - limpieza de vendas
 ;
 
 
@@ -18,34 +18,77 @@ set %limitHits 15
 
 Preparador:
 
-    gosub MoverInicio
+    gosub ControlMovimiento
     gosub LimpiarVendas
-    gosub MoverFinal
+    gosub ControlMovimiento
 
 exit
 
 
 ; ============================================================
-; MOVIMIENTO INICIAL
+; CONTROL DE MOVIMIENTO
 ; ============================================================
 
-sub MoverInicio
+sub ControlMovimiento
 
-    if #HITS < %limitHits && #CHARPOSX < 1390
+    ; prioridad 1: curación
+    if #HITS < %limitHits
     {
-        set %inicioX #CHARPOSX + 20
-        set %inicioY #CHARPOSY
-        move %inicioX %inicioY
+        Event SysMessage [MOVE] zona curación
+        gosub MoverA *CFG_HEAL_POS_X *CFG_HEAL_POS_Y
+        return
     }
+
+    ; prioridad 2: ciclo entre puntos
+    gosub EstoyCerca *CFG_INITIAL_POS_X *CFG_INITIAL_POS_Y
+
+    if %estoyCerca = 1
+    {
+        Event SysMessage [MOVE] hacia FINAL
+        gosub MoverA *CFG_FINAL_POS_X *CFG_FINAL_POS_Y
+        return
+    }
+
+    gosub EstoyCerca *CFG_FINAL_POS_X *CFG_FINAL_POS_Y
+
+    if %estoyCerca = 1
+    {
+        Event SysMessage [MOVE] hacia INICIAL
+        gosub MoverA *CFG_INITIAL_POS_X *CFG_INITIAL_POS_Y
+        return
+    }
+
+    ; fallback
+    Event SysMessage [MOVE] recolocación INICIAL
+    gosub MoverA *CFG_INITIAL_POS_X *CFG_INITIAL_POS_Y
+
+return
+
+
+; ============================================================
+; CHECK PROXIMIDAD
+; ============================================================
+
+sub EstoyCerca
+
+    if #CHARPOSX >= %1 - 1 && #CHARPOSX <= %1 + 1 && #CHARPOSY >= %2 - 1 && #CHARPOSY <= %2 + 1
+        set %estoyCerca 1
     else
-    {
-        if #CHARPOSX < 1390
-        {
-            set %inicioX #CHARPOSX - 1
-            set %inicioY #CHARPOSY + 8
-            move %inicioX %inicioY
-        }
-    }
+        set %estoyCerca 0
+
+return
+
+
+; ============================================================
+; MOVIMIENTO
+; ============================================================
+
+sub MoverA
+
+    if #CHARPOSX = %1 && #CHARPOSY = %2
+        return
+
+    move %1 %2 0 20s
 
 return
 
@@ -78,7 +121,7 @@ return
 
 sub SoltarPilon
 
-    set %idPilonAgua PCGELPD
+    set %idPilonAgua *CFG_PILON_AGUA_ID
 
     set %dropX #CHARPOSX + 1
     set %dropY #CHARPOSY + 1
@@ -93,7 +136,7 @@ return
 
 
 ; ============================================================
-; USAR VENDAS SUCIAS
+; USAR VENDAS
 ; ============================================================
 
 sub UsarVendasSucias
@@ -101,9 +144,10 @@ sub UsarVendasSucias
     set #LOBJECTID #FINDID
     event macro 17 0
 
-    set #LTARGETID %idPilonAgua
-
     target 10s
+	set #LTARGETID %idPilonAgua
+	set #LTARGETKIND 1
+
     event macro 22 0
 
     wait 1s
@@ -122,30 +166,5 @@ sub RecogerPilon
 
     Exevent Dropc #BACKPACKID
     wait 10
-
-return
-
-
-; ============================================================
-; MOVIMIENTO FINAL
-; ============================================================
-
-sub MoverFinal
-
-    if #HITS > %limitHits && #CHARPOSX > 1390
-    {
-        set %finalX #CHARPOSX - 20
-        set %finalY #CHARPOSY
-        move %finalX %finalY
-    }
-    else
-    {
-        if #CHARPOSX < 1390
-        {
-            set %finalX #CHARPOSX + 1
-            set %finalY #CHARPOSY - 8
-            move %finalX %finalY
-        }
-    }
 
 return

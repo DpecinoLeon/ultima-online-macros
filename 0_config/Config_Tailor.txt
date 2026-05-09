@@ -1,6 +1,14 @@
 Event SysMessage [CONFIG] Inicializando configuracion de TAILOR
 
 ; =========================
+; INSTRUCCIONES
+; =========================
+
+; Colocarse cerca de un vendedor de telas
+; Configurar los scripts de assistUO para comprar, vender y fabricar como se indica en los preparadores y ejecutores.
+; Tener abierto el gump de costura con la pagina donde se fabrican las bandanas
+
+; =========================
 ; FICHEROS
 ; =========================
 set *CFG_SCRIPT_ORQUESTADOR Orquestador.txt
@@ -30,7 +38,7 @@ set *CFG_SKILL_REQUIRES_OBJECT 1
 set *CFG_SKILL_EQUIP_OBJECT 0
 set *CFG_SKILL_OBJECT_TYPE HAG      ; Kit de Costura
 set *CFG_SKILL_OBJECT_COUNT 3
-set *CFG_SKILL_OBJECT_CONTAINER HOGDSND
+set *CFG_SKILL_OBJECT_CONTAINER HOGDSND ;***********	Contenedor con kits de costura
 set *CFG_SKILL_OBJECT_USEOBJECT 1
 set *CFG_SKILL_OBJECT_USETARGET 1
 set *CFG_SKILL_OBJECT_TARGET RTI     ; Tela
