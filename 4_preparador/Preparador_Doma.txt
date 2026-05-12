@@ -31,7 +31,7 @@ exit
 
 sub PrepararAccion
 
-    gosub callScriptWithParams %SCRIPT_TELEPORT_DESATASCAR *CFG_SAFE_TILE_X *CFG_SAFE_TILE_Y
+    ;gosub callScriptWithParams %SCRIPT_TELEPORT_DESATASCAR *CFG_SAFE_TILE_X *CFG_SAFE_TILE_Y
 
     gosub ResetAnimalsIgnoreIfCooldown
 
@@ -179,7 +179,7 @@ return
 ; ============================================================
 
 sub ScanZona
-
+	event sysmessage escaneando zona
     set *ANIMAL_TARGET_ID -1
 
     findItem *CFG_ANIMAL_TYPES G_ , *CFG_ANIMAL_DISTANCE
@@ -226,6 +226,7 @@ return
 ; ============================================================
 
 sub callScriptWithParams
+    ; %1 = script
 
     set %scriptFile %1
     set *param0 %0 - 1
@@ -237,7 +238,7 @@ sub callScriptWithParams
     {
         for %callScriptWithParams_i 2 %0
         {
-            set *param . %callScriptWithParams_j %callScriptWithParams_i - 1
+            set %callScriptWithParams_j %callScriptWithParams_i - 1
 
             if %callScriptWithParams_i = 2
                 set *param . %callScriptWithParams_j %2
@@ -253,5 +254,4 @@ sub callScriptWithParams
     }
 
     call %scriptFile
-
 return

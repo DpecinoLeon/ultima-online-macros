@@ -273,8 +273,9 @@ sub pauseDebug
 return
 
 ; ============================================================
-; CALL GENERICO CON PARAMETROS (no modificar)
+; CALL SCRIPT UTILITY
 ; ============================================================
+
 sub callScriptWithParams
     ; %1 = script
 

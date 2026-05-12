@@ -170,11 +170,10 @@ return
 
 
 ; ============================================================
-; CALL GENERICO CON PARAMETROS
+; CALL SCRIPT UTILITY
 ; ============================================================
 
 sub callScriptWithParams
-
     ; %1 = script
 
     set %scriptFile %1
@@ -191,21 +190,16 @@ sub callScriptWithParams
 
             if %callScriptWithParams_i = 2
                 set *param . %callScriptWithParams_j %2
-
             if %callScriptWithParams_i = 3
                 set *param . %callScriptWithParams_j %3
-
             if %callScriptWithParams_i = 4
                 set *param . %callScriptWithParams_j %4
-
             if %callScriptWithParams_i = 5
                 set *param . %callScriptWithParams_j %5
-
             if %callScriptWithParams_i = 6
                 set *param . %callScriptWithParams_j %6
         }
     }
 
     call %scriptFile
-
 return

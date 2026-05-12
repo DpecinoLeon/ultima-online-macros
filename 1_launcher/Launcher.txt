@@ -133,6 +133,6 @@ sub resetVariables
     ; --------------------------------------------------------
     ; control de farmzone
     ; --------------------------------------------------------
-    set *resetFarmZone 0
+    set *resetFarmZone 1
 
 return

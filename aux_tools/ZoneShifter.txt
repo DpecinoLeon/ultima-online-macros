@@ -161,7 +161,7 @@ sub MoverACentroZona
     if *DEBUGMODE = 1
         Event SysMessage [ZONESHIFTER] Moviendo centro zona
 
-    move %tempzoneCenterCoordX %tempzoneCenterCoordY 1 %MOVE_TIMEOUT
+    move %tempzoneCenterCoordX %tempzoneCenterCoordY 0 %MOVE_TIMEOUT
 
 return
 
@@ -243,6 +243,122 @@ sub CalcularDireccionFarmZone
 
 return
 
+sub SetFarmZoneVariables
+    ; =========================
+    ; Copia de variables activas
+    ; =========================
+    set *farmZoneDefinition %tempfarmZoneDefinition
+    set *farmZoneCenterX %tempfarmZoneCenterX
+    set *farmZoneCenterY %tempfarmZoneCenterY
+    set *farmZoneTopLeftX %tempfarmZoneTopLeftX
+    set *farmZoneTopLeftY %tempfarmZoneTopLeftY
+    set *farmZoneBotRightX %tempfarmZoneBotRightX
+    set *farmZoneBotRightY %tempfarmZoneBotRightY
+    set *farmZoneSizeX %tempfarmZoneSizeX
+    set *farmZoneSizeY %tempfarmZoneSizeY
+    set *farmZoneZoneSizeX %tempfarmZoneZoneSizeX
+    set *farmZoneZoneSizeY %tempfarmZoneZoneSizeY
+    set *zoneCountX %tempzoneCountX
+    set *zoneCountY %tempzoneCountY
+
+    ; =========================
+    ; HISTÓRICO DE FARMZONES
+    ; =========================
+    if *farmzoneHistory = ""
+    {
+        set *farmzoneHistory *farmZone
+    }
+    else
+    {
+        set *farmzoneHistory *farmzoneHistory , _ , *farmZone
+    }
+	
+	set *subfarmzoneHistory 0 , - , 0
+
+return
+
+
+sub CalcularZona ; Calcula los límites reales de la zona
+    ; %1 = zoneX
+    ; %2 = zoneY
+    ; Coordenadas del inicio de la zona
+    set %tempzoneStartCoodX *farmZoneTopLeftX + ( %1 * *farmZoneZoneSizeX )
+    set %tempzoneStartCoodY *farmZoneTopLeftY + ( %2 * *farmZoneZoneSizeY )
+
+    ; Coordenadas del fin de la zona (límite real)
+    set %tempzoneEndCoordX %tempzoneStartCoodX + *farmZoneZoneSizeX - 1
+    set %tempzoneEndCoordY %tempzoneStartCoodY + *farmZoneZoneSizeY - 1
+
+    ; Ajustar si excede límites globales
+    if %tempzoneEndCoordX > *farmZoneBotRightX
+        set %tempzoneEndCoordX *farmZoneBotRightX
+    if %tempzoneEndCoordY > *farmZoneBotRightY
+        set %tempzoneEndCoordY *farmZoneBotRightY
+
+    ; Centro de la zona
+    set %tempzoneCenterCoordX %tempzoneStartCoodX + ( ( %tempzoneEndCoordX - %tempzoneStartCoodX ) / 2 )
+    set %tempzoneCenterCoordY %tempzoneStartCoodY + ( ( %tempzoneEndCoordY - %tempzoneStartCoodY ) / 2 )
+
+    ; Índices mínimos y máximos dentro de la zona
+    set %minIndexZoneX 0
+    set %minIndexZoneY 0
+    set %maxIndexZoneX %tempzoneEndCoordX - %tempzoneStartCoodX
+    set %maxIndexZoneY %tempzoneEndCoordY - %tempzoneStartCoodY
+return
+
+
+
+; Las variables son en % porque son temporales
+sub calcularFarmZone
+
+    ; %1 = farmZoneIndex
+    set %tempfarmZoneDefinition *CFG_FARMZONE_DEFINITION . %1
+    set %tempfarmZoneCenterX *CFG_FARMZONE_CENTER_X . %1
+    set %tempfarmZoneCenterY *CFG_FARMZONE_CENTER_Y . %1
+    ; Variables para definir por esquinas
+    set %tempfarmZoneTopLeftX *CFG_FARMZONE_TOP_LEFT_X . %1
+    set %tempfarmZoneTopLeftY *CFG_FARMZONE_TOP_LEFT_Y . %1
+    set %tempfarmZoneBotRightX *CFG_FARMZONE_BOT_RIGHT_X . %1
+    set %tempfarmZoneBotRightY *CFG_FARMZONE_BOT_RIGHT_Y . %1
+
+    set %tempfarmZoneSizeX *CFG_FARMZONE_SIZE_X . %1
+    set %tempfarmZoneSizeY *CFG_FARMZONE_SIZE_Y . %1
+
+    set %tempfarmZoneZoneSizeX *CFG_FARMZONE_ZONE_SIZE_X . %1
+    set %tempfarmZoneZoneSizeY *CFG_FARMZONE_ZONE_SIZE_Y . %1
+
+    if %tempfarmZoneDefinition = CENTER
+    {
+    ;Consideramos que se ha definido la macroZona por centro, calculamos las esquinas.
+        set %tempfarmZoneTopLeftX %tempfarmZoneCenterX - ( %tempfarmZoneSizeX / 2 )
+        set %tempfarmZoneTopLeftY %tempfarmZoneCenterY - ( %tempfarmZoneSizeY / 2 )
+        set %tempfarmZoneBotRightX %tempfarmZoneCenterX + ( %tempfarmZoneSizeX / 2 ) - 1
+        set %tempfarmZoneBotRightY %tempfarmZoneCenterY + ( %tempfarmZoneSizeY / 2 ) - 1
+    }
+    else {
+        set %tempfarmZoneCenterX %tempfarmZoneTopLeftX + ( %tempfarmZoneSizeX / 2 )
+    }
+    set %widthX ( %tempfarmZoneBotRightX - %tempfarmZoneTopLeftX + 1 )
+    set %tempzoneCountX %widthX / %tempfarmZoneZoneSizeX
+;    Event SysMessage [calcularFarmZone] [DEBUG] topLeftX %tempfarmZoneTopLeftX
+;    Event SysMessage [calcularFarmZone] [DEBUG] topLeftX %tempfarmZoneTopLeftY
+;    Event SysMessage [calcularFarmZone] [DEBUG] topLeftX %tempfarmZoneBotRightX
+;    Event SysMessage [calcularFarmZone] [DEBUG] topLeftX %tempfarmZoneBotRightY
+    
+    if %widthX % %tempfarmZoneZoneSizeX <> 0 ; Hay espacio sobrante en X
+        set %tempzoneCountX %tempzoneCountX + 1
+;    Event SysMessage [calcularFarmZone] [DEBUG] widthX %widthX
+    set %widthY ( %tempfarmZoneBotRightY - %tempfarmZoneTopLeftY + 1 )
+;    Event SysMessage [calcularFarmZone] [DEBUG] widthY %widthY
+    set %tempzoneCountY ( %tempfarmZoneBotRightY - %tempfarmZoneTopLeftY + 1 ) / %tempfarmZoneZoneSizeY
+    if %widthY % %tempfarmZoneZoneSizeY <> 0 ; Hay espacio sobrante en Y
+        set %tempzoneCountY %tempzoneCountY + 1
+    if %tempfarmZoneDefinition <> CENTER
+    {
+        set %tempfarmZoneCenterX %tempfarmZoneTopLeftX + ( %widthX / 2 )
+        set %tempfarmZoneCenterY %tempfarmZoneTopLeftY + ( %widthY / 2 )
+    }
+return
 
 ; ============================================================
 ; DETECCION FARMZONE ACTUAL

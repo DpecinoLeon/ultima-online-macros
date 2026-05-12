@@ -69,8 +69,9 @@ sub DejarItem
 return
 
 ; ============================================================
-; CALL GENERICO CON PARAMETROS
+; CALL SCRIPT UTILITY
 ; ============================================================
+
 sub callScriptWithParams
     ; %1 = script
 

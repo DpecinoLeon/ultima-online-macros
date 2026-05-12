@@ -134,6 +134,7 @@ return
 ; ============================================================
 
 sub callScriptWithParams
+    ; %1 = script
 
     set %scriptFile %1
     set *param0 %0 - 1
@@ -145,7 +146,7 @@ sub callScriptWithParams
     {
         for %callScriptWithParams_i 2 %0
         {
-            set *param . %callScriptWithParams_j %callScriptWithParams_i - 1
+            set %callScriptWithParams_j %callScriptWithParams_i - 1
 
             if %callScriptWithParams_i = 2
                 set *param . %callScriptWithParams_j %2
@@ -161,5 +162,4 @@ sub callScriptWithParams
     }
 
     call %scriptFile
-
 return
