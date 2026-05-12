@@ -89,20 +89,18 @@ sub DomarAnimal
         ;----------------------------------------------------
         ; EJECUCIÓN SKILL TAMING
         ;----------------------------------------------------
-        wait 50
+		Event SysMessage [TAMING] Iniciando doma
+		wait 50
         event macro 13 35
-
-        target 3s
-
+		target 3s		
         set #LTARGETID *ANIMAL_TARGET_ID
-        set #LTARGETKIND 1
-        event Macro 22
-
-        gosub AcercarseAnimal
-        wait 50
-
+		set #lTargetKind 1
+		gosub AcercarseAnimal
+		event Macro 22
+		
+		wait 50
+		
         gosub EsperarResultado
-
 
         ;----------------------------------------------------
         ; RESULTADO OK
@@ -156,7 +154,7 @@ sub EsperarResultado
     repeat
         set %journalEnd #JINDEX
         gosub AnalizarResultado
-
+		set %journalStart %journalEnd
         if %resultado = %RESULT_OK || %resultado = %RESULT_FAIL
             return
 

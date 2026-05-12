@@ -31,7 +31,7 @@ exit
 
 sub PrepararAccion
 
-    ;gosub callScriptWithParams %SCRIPT_TELEPORT_DESATASCAR *CFG_SAFE_TILE_X *CFG_SAFE_TILE_Y
+    gosub callScriptWithParams %SCRIPT_TELEPORT_DESATASCAR *CFG_SAFE_TILE_X *CFG_SAFE_TILE_Y
 
     gosub ResetAnimalsIgnoreIfCooldown
 
