@@ -47,7 +47,8 @@ La mayoría de automatizaciones se construyen únicamente cambiando la configura
 - Cargar en easyUO el archivo launcher.txt
 - Cambiar la linea set *SCRIPT_DIR D:\Damian\Chorradillas\UltimaOnline\Scripts\ para adaptarlo a tu ruta
 - Cambiar la linea set %CONFIG_SCRIPT *SCRIPT_DIR , 0_config\ , Config_Doma_Yew.txt para elegir el fichero de configuracion que se quiera usar para macrear. 
-
+- Ejecutar el archivo en easyUO
+- *NOTA: Adicionalmente se puede cargar en easyUo el script loop_tools/comer.txt para que coma mientras farmea.
 ---
 
 # Arquitectura general

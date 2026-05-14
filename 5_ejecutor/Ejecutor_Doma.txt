@@ -52,7 +52,7 @@ sub EjecutarAccion
     ;--------------------------------------------------------
     ; 2) RESOLUCIÓN DE RESULTADO
     ;--------------------------------------------------------
-    if *CFG_TAMING_FORCE_KILL_ON_FAIL = 1
+    if *CFG_TAMING_FORCE_KILL_ON_FAIL = 1 && %ANIMAL_IS_ALREADY_TAMED = 1
     {
         gosub MatarAnimal
     }
@@ -98,7 +98,7 @@ sub DomarAnimal
 		gosub AcercarseAnimal
 		event Macro 22
 		
-		wait 50
+		wait 100
 		
         gosub EsperarResultado
 
@@ -166,7 +166,7 @@ sub EsperarResultado
         }
 
         gosub AcercarseAnimal
-        wait 1s
+        wait 50
 
     until 0
 
@@ -177,7 +177,7 @@ return
 ; ANALISIS DE JOURNAL (RESULTADO SKILL)
 ;============================================================
 sub AnalizarResultado
-
+	set %ANIMAL_IS_ALREADY_TAMED 0
     for %journalIndex %journalStart %journalEnd
     {
         set %journalIndexToFind #JINDEX - %journalIndex
@@ -188,10 +188,13 @@ sub AnalizarResultado
         ;-------------------------
         for %failIndex 0 *CFG_FAIL_COUNT
         {
-            if *CFG_FAIL . %failIndex in #JOURNAL
+
+			if *CFG_FAIL . %failIndex in #JOURNAL
             {
                 Event SysMessage [EJECUTOR_DOMA] FAIL DETECTADO
                 set %resultado %RESULT_FAIL
+				
+				
                 return
             }
         }
@@ -201,10 +204,15 @@ sub AnalizarResultado
         ;-------------------------
         for %okIndex 0 *CFG_OK_COUNT
         {
-            if *CFG_OK . %okIndex in #JOURNAL
+            
+			if *CFG_OK . %okIndex in #JOURNAL
             {
                 Event SysMessage [EJECUTOR_DOMA] DOMA OK
                 set %resultado %RESULT_OK
+				if *CFG_ALREADY_TAMED_MSG in *CFG_OK . %okIndex
+				{
+				 set %ANIMAL_IS_ALREADY_TAMED 1
+				}
                 return
             }
         }
@@ -225,7 +233,7 @@ sub AcercarseAnimal
     set %x #findx
     set %y #findy
 
-    gosub callScriptWithParams %SCRIPT_MOVERALUGAR %x %y 1 3s
+    gosub callScriptWithParams %SCRIPT_MOVERALUGAR %x %y 0 3s
 
 return
 
@@ -267,7 +275,7 @@ sub MatarAnimal
 
     if *DEBUGMODE = 1
         Event SysMessage [COMBAT] Iniciando limpieza
-
+	set %intentos_matar 0
     repeat
     {
         finditem *ANIMAL_TARGET_ID G_
@@ -279,6 +287,11 @@ sub MatarAnimal
 
         gosub AcercarseAnimal
         wait 1s
+		if %intentos_matar > *CFG_TAMING_KILL_MAX_INTENTOS
+		{
+		return
+		}
+		set %intentos_matar %intentos_matar + 1
     }
     until 0
 
