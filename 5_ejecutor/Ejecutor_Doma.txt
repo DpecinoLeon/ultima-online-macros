@@ -28,6 +28,8 @@ set %RESULT_FAIL 1
 set %RESULT_WAIT 2
 set %RESULT_OK 0
 
+set %SCRIPT_MOVERALUGAR *SCRIPT_DIR , aux_tools\ , Mover_A_Lugar.txt
+set %SCRIPT_EQUIPAR_ARMA *SCRIPT_DIR , aux_tools\ , Equipar_Item.txt
 gosub EjecutarAccion
 exit
 
@@ -52,7 +54,8 @@ sub EjecutarAccion
     ;--------------------------------------------------------
     ; 2) RESOLUCIÓN DE RESULTADO
     ;--------------------------------------------------------
-    if *CFG_TAMING_FORCE_KILL_ON_FAIL = 1 && %ANIMAL_IS_ALREADY_TAMED = 1
+    gosub callScriptWithParams %SCRIPT_EQUIPAR_ARMA *CFG_ANIMAL_KILL_WEAPONS
+	if *CFG_TAMING_FORCE_KILL_ON_FAIL = 1 && %ANIMAL_IS_ALREADY_TAMED = 1 && returned0 <> 0
     {
         gosub MatarAnimal
     }

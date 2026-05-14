@@ -17,6 +17,7 @@
 set %SCRIPT_ZONE_SHIFTER *SCRIPT_DIR , aux_tools\ , ZoneShifter.txt
 set %SCRIPT_TELEPORT_DESATASCAR *SCRIPT_DIR , aux_tools\ , Teleport_Si_Atascado.txt
 set %SCRIPT_MOVERALUGAR *SCRIPT_DIR , aux_tools\ , Mover_A_Lugar.txt
+set %SCRIPT_EQUIPAR_ARMA *SCRIPT_DIR , aux_tools\ , Equipar_Item.txt
 
 
 ; ============================================================
@@ -32,10 +33,11 @@ exit
 sub PrepararAccion
 
     gosub callScriptWithParams %SCRIPT_TELEPORT_DESATASCAR *CFG_SAFE_TILE_X *CFG_SAFE_TILE_Y
+	
 
     gosub ResetAnimalsIgnoreIfCooldown
 
-
+	gosub callScriptWithParams %SCRIPT_EQUIPAR_ARMA *CFG_ANIMAL_KILL_WEAPONS
     gosub ScanZona
 
     if *ANIMAL_TARGET_ID <> -1
